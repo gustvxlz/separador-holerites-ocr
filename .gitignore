@@ -1,0 +1,15 @@
+# Documentos e dados pessoais usados no processamento
+*.pdf
+*.csv
+*.xlsx
+*.xlsm
+*.zip
+.env
+.env.*
+
+# Arquivos temporários e editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
