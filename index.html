@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Separador de Holerites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEAE0;
+    --card:#FFFFFF;
+    --ink:#1C2B29;
+    --ink-soft:#5B6663;
+    --line:#DCD3C0;
+    --folder:#C9974F;
+    --folder-dark:#8C6327;
+    --navy:#20384F;
+    --navy-dark:#152738;
+    --green:#2E6B4E;
+    --green-bg:#E4EFE6;
+    --red:#A2382C;
+    --red-bg:#F5E4E0;
+    --amber:#B3791C;
+    --amber-bg:#F6E9CF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(28,43,41,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    padding: 28px 18px 60px;
+  }
+  .wrap{max-width:900px;margin:0 auto;}
+
+  header.top{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:22px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:14px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:42px;height:42px;border-radius:8px;
+    background:linear-gradient(155deg,var(--folder),var(--folder-dark));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;
+    box-shadow:0 3px 0 rgba(0,0,0,0.15);
+    transform:rotate(-3deg);
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:23px;margin:0;letter-spacing:-0.01em;
+  }
+  .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;color:var(--ink-soft);
+    letter-spacing:.06em;text-transform:uppercase;
+  }
+  .badge-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;background:var(--ink);color:var(--paper);
+    padding:5px 10px;border-radius:20px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px 22px;
+    margin-bottom:16px;
+    box-shadow:0 1px 0 rgba(28,43,41,0.04);
+  }
+  .card h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:15px;margin:0 0 4px;display:flex;align-items:center;gap:8px;
+  }
+  .step-no{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;color:#fff;background:var(--navy);
+    width:20px;height:20px;border-radius:5px;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .hint{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;line-height:1.5;}
+
+  /* CSV zone */
+  .csv-status{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;flex-wrap:wrap;
+    background:var(--green-bg);
+    border:1px dashed var(--green);
+    border-radius:8px;padding:12px 14px;
+  }
+  .csv-status.empty{background:#F4F1E8;border-color:var(--line);}
+  .csv-status .left{display:flex;align-items:center;gap:10px;}
+  .stamp-mini{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;
+    color:var(--green);border:1.5px solid var(--green);border-radius:5px;
+    padding:2px 6px;letter-spacing:.04em;transform:rotate(-4deg);
+  }
+  .csv-meta{font-size:12.5px;}
+  .csv-meta b{font-family:'IBM Plex Mono',monospace;font-weight:600;}
+
+  input[type=file]{display:none;}
+  .btn{
+    font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;
+    border:none;border-radius:7px;padding:9px 15px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+    transition:transform .08s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-navy{background:var(--navy);color:#fff;}
+  .btn-navy:hover{background:var(--navy-dark);}
+  .btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy);}
+  .btn-outline:hover{background:var(--navy);color:#fff;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-danger-outline{background:transparent;color:var(--red);border:1.5px solid var(--red);}
+
+  /* Dropzone */
+  .dropzone{
+    border:2px dashed var(--folder);
+    border-radius:9px;
+    padding:26px 16px;
+    text-align:center;
+    background:#FBF6EC;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .dropzone.drag{background:var(--amber-bg);border-color:var(--amber);}
+  .dropzone p{margin:4px 0;font-size:13px;}
+  .dropzone .big{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;}
+  .dropzone .small{color:var(--ink-soft);font-size:11.5px;}
+
+  .file-list{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+  .file-row{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--paper);border:1px solid var(--line);border-radius:7px;
+    padding:9px 12px;font-size:12.5px;
+  }
+  .file-row .name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:420px;}
+  .file-row .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);white-space:nowrap;}
+  .file-row .remove{color:var(--red);cursor:pointer;font-size:15px;line-height:1;background:none;border:none;padding:2px 4px;}
+
+  .actionbar{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;flex-wrap:wrap;
+  }
+  .log{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);
+    margin-top:10px;white-space:pre-wrap;line-height:1.6;max-height:140px;overflow-y:auto;
+  }
+  .progress-track{
+    width:100%;height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:10px;display:none;
+  }
+  .progress-track.show{display:block;}
+  .progress-bar{height:100%;width:0%;background:var(--folder);transition:width .2s;}
+
+  /* results */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  thead th{
+    text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);
+    border-bottom:1.5px solid var(--ink);padding:6px 8px;
+  }
+  tbody td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tbody tr:hover{background:#FAF7EF;}
+  .fname{font-family:'IBM Plex Mono',monospace;font-size:11.5px;}
+  .stamp{
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:9.5px;
+    letter-spacing:.06em;border-radius:4px;padding:3px 7px;display:inline-block;
+    transform:rotate(-3deg);white-space:nowrap;
+  }
+  .stamp.ok{color:var(--green);border:1.5px solid var(--green);background:var(--green-bg);}
+  .stamp.missing{color:var(--red);border:1.5px solid var(--red);background:var(--red-bg);}
+  .stamp.upd{color:var(--amber);border:1.5px solid var(--amber);background:var(--amber-bg);margin-left:5px;}
+  .cpf-input{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    border:1.3px solid var(--line);border-radius:5px;padding:5px 7px;width:118px;
+  }
+  .cpf-input:focus{outline:none;border-color:var(--navy);}
+
+  .summary-strip{
+    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;
+  }
+  .pill{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--paper);
+  }
+  .pill b{font-size:13px;}
+
+  footer{
+    text-align:center;font-size:11px;color:var(--ink-soft);margin-top:26px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark">CPF</div>
+      <div>
+        <h1>Separador de Holerites</h1>
+        <div class="tag">extrai · OCR automático · casa CPF · renomeia · zipa</div>
+      </div>
+    </div>
+    <div class="badge-count" id="headerBadge">pronto</div>
+  </header>
+
+  <!-- STEP 1: CSV -->
+  <div class="card">
+    <h2><span class="step-no">1</span> Planilha de colaboradores (CSV)</h2>
+    <p class="hint">Precisa ter as colunas <b>nome</b> e <b>cpf</b>. Depois de enviada uma vez, ela fica guardada aqui — não precisa reenviar todo mês.</p>
+
+    <div class="csv-status empty" id="csvStatus">
+      <div class="left">
+        <span id="csvStampWrap"></span>
+        <span class="csv-meta" id="csvMetaText">Nenhuma planilha carregada ainda.</span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <label class="btn btn-navy" for="csvInput">Enviar CSV</label>
+        <button class="btn btn-danger-outline hidden" id="btnClearCsv">Remover</button>
+      </div>
+    </div>
+    <input type="file" id="csvInput" accept=".csv">
+  </div>
+
+  <!-- STEP 2: PDFs -->
+  <div class="card">
+    <h2><span class="step-no">2</span> Holerites (PDF)</h2>
+    <p class="hint">Solte os PDFs da folha (lotes com vários funcionários e/ou arquivos avulsos de 1 página). Se uma página não tiver texto pesquisável ou o nome não for localizado, o sistema tenta <b>OCR automaticamente</b>. <b>Um arquivo de 1 página só é sempre tratado como a versão atualizada</b> daquele funcionário, substituindo a página dele em qualquer lote.</p>
+    <div class="dropzone" id="dropzone">
+      <p class="big">Arraste os PDFs aqui</p>
+      <p class="small">ou clique para selecionar · múltiplos arquivos</p>
+    </div>
+    <input type="file" id="pdfInput" accept="application/pdf" multiple style="display:none;">
+    <div class="file-list" id="fileList"></div>
+  </div>
+
+  <!-- STEP 3: process -->
+  <div class="card">
+    <h2><span class="step-no">3</span> Processar</h2>
+    <div class="actionbar">
+      <button class="btn btn-navy" id="btnProcess" disabled>Processar holerites</button>
+      <button class="btn btn-outline hidden" id="btnDownload">Baixar .zip</button>
+    </div>
+    <div class="progress-track" id="progressTrack"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card hidden" id="resultsCard">
+    <h2><span class="step-no">✓</span> Resultado</h2>
+    <div class="summary-strip" id="summaryStrip"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome no recibo</th>
+          <th>CPF</th>
+          <th>Arquivo gerado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <footer>processa tudo no seu navegador — nenhum arquivo é enviado a um servidor</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.5.4/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
+
+/* ---------------------------------------------------------------
+   UTIL: normalization, fuzzy match, filename cleaning
+----------------------------------------------------------------*/
+function stripAccents(s){
+  return s.normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
+}
+function normName(s){
+  return stripAccents((s||'').trim().toUpperCase()).replace(/\s+/g,' ');
+}
+const CONNECTORS = new Set(['DE','DA','DO','DAS','DOS','E']);
+function wordSet(s){
+  return new Set(normName(s).split(' ').filter(w=>w && !CONNECTORS.has(w)));
+}
+function sameWordSet(a,b){
+  const A=wordSet(a), B=wordSet(b);
+  if(A.size!==B.size || A.size===0) return false;
+  for(const w of A){ if(!B.has(w)) return false; }
+  return true;
+}
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=new Array(n+1);
+  for(let j=0;j<=n;j++) dp[j]=j;
+  for(let i=1;i<=m;i++){
+    let prev=dp[0]; dp[0]=i;
+    for(let j=1;j<=n;j++){
+      const tmp=dp[j];
+      dp[j]=Math.min(
+        dp[j]+1,
+        dp[j-1]+1,
+        prev+(a[i-1]===b[j-1]?0:1)
+      );
+      prev=tmp;
+    }
+  }
+  return dp[n];
+}
+function similarity(a,b){
+  const A=normName(a), B=normName(b);
+  const maxLen=Math.max(A.length,B.length)||1;
+  return 1-(levenshtein(A,B)/maxLen);
+}
+function cleanFilenamePart(s){
+  const noAcc = stripAccents((s||'').trim().toUpperCase());
+  const onlyAlnum = noAcc.replace(/[^A-Z0-9 ]/g,'');
+  return onlyAlnum.split(/\s+/).filter(Boolean).join('_');
+}
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[char]));
+}
+function onlyDigits(s){ return (s||'').replace(/\D/g,''); }
+
+/* ---------------------------------------------------------------
+   PERSISTENT CSV STORAGE
+----------------------------------------------------------------*/
+let CSV_ROWS = [];   // [{nome, cpf, normName}]
+let CSV_BY_NAME = new Map();
+
+function indexCsv(rowsRaw){
+  CSV_ROWS = rowsRaw
+    .map(r=>({
+      nome: (r.nome||r.Nome||r.NOME||'').trim(),
+      cpf: onlyDigits(r.cpf||r.Cpf||r.CPF||'')
+    }))
+    .filter(r=>r.nome && r.cpf);
+  CSV_BY_NAME = new Map();
+  for(const r of CSV_ROWS){ CSV_BY_NAME.set(normName(r.nome), r); }
+}
+
+function findCpf(pdfName){
+  const n = normName(pdfName);
+  if(CSV_BY_NAME.has(n)) return CSV_BY_NAME.get(n);
+  // word-set match (handles reordering, e.g. "DA SILVA SOUZA" vs "SILVA DE SOUZA")
+  for(const r of CSV_ROWS){
+    if(sameWordSet(pdfName, r.nome)) return r;
+  }
+  // levenshtein fuzzy fallback
+  let best=null, bestScore=0.75; // threshold
+  for(const r of CSV_ROWS){
+    const sc = similarity(pdfName, r.nome);
+    if(sc>bestScore){ bestScore=sc; best=r; }
+  }
+  return best;
+}
+
+// Persistência no próprio navegador, sem depender do ambiente de uma plataforma.
+const csvStorage = {
+  async get(key){
+    const value = localStorage.getItem(key);
+    return value === null ? null : {value};
+  },
+  async set(key, value){ localStorage.setItem(key, value); },
+  async delete(key){ localStorage.removeItem(key); }
+};
+
+async function loadStoredCsv(){
+  try{
+    const res = await csvStorage.get('colaboradores_csv_text', false);
+    if(res && res.value){
+      const meta = await csvStorage.get('colaboradores_csv_meta', false).catch(()=>null);
+      applyCsvText(res.value, meta ? JSON.parse(meta.value) : null);
+    }
+  }catch(e){ /* nothing stored yet */ }
+}
+async function saveCsv(text, filename){
+  const meta = {filename: filename||'colaboradores.csv', savedAt: new Date().toISOString(), count: CSV_ROWS.length};
+  try{
+    await csvStorage.set('colaboradores_csv_text', text, false);
+    await csvStorage.set('colaboradores_csv_meta', JSON.stringify(meta), false);
+  }catch(e){ console.warn('nao foi possivel salvar no storage', e); }
+}
+async function clearStoredCsv(){
+  try{
+    await csvStorage.delete('colaboradores_csv_text', false);
+    await csvStorage.delete('colaboradores_csv_meta', false);
+  }catch(e){}
+}
+
+function applyCsvText(text, meta){
+  const parsed = Papa.parse(text, {header:true, skipEmptyLines:true});
+  indexCsv(parsed.data);
+  renderCsvStatus(meta && meta.filename ? meta.filename : 'planilha.csv');
+}
+
+function renderCsvStatus(filename){
+  const wrap = document.getElementById('csvStatus');
+  const meta = document.getElementById('csvMetaText');
+  const stampWrap = document.getElementById('csvStampWrap');
+  const clearBtn = document.getElementById('btnClearCsv');
+  if(CSV_ROWS.length>0){
+    wrap.classList.remove('empty');
+    stampWrap.innerHTML = '<span class="stamp-mini">CARREGADA</span>';
+    meta.innerHTML = `<b>${escapeHtml(filename)}</b> — ${CSV_ROWS.length} colaborador(es) guardados neste navegador`;
+    clearBtn.classList.remove('hidden');
+  }else{
+    wrap.classList.add('empty');
+    stampWrap.innerHTML='';
+    meta.textContent='Nenhuma planilha carregada ainda.';
+    clearBtn.classList.add('hidden');
+  }
+  updateProcessButton();
+}
+
+document.getElementById('csvInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const text = await file.text();
+  applyCsvText(text, {filename:file.name});
+  await saveCsv(text, file.name);
+});
+document.getElementById('btnClearCsv').addEventListener('click', async ()=>{
+  CSV_ROWS=[]; CSV_BY_NAME=new Map();
+  await clearStoredCsv();
+  renderCsvStatus('');
+});
+
+/* ---------------------------------------------------------------
+   PDF UPLOAD (dropzone + list)
+----------------------------------------------------------------*/
+let PDF_FILES = []; // {file, id}
+let idCounter = 0;
+
+const dropzone = document.getElementById('dropzone');
+const pdfInput = document.getElementById('pdfInput');
+dropzone.addEventListener('click', ()=>pdfInput.click());
+['dragenter','dragover'].forEach(evt=>{
+  dropzone.addEventListener(evt, e=>{e.preventDefault(); dropzone.classList.add('drag');});
+});
+['dragleave','drop'].forEach(evt=>{
+  dropzone.addEventListener(evt, e=>{e.preventDefault(); dropzone.classList.remove('drag');});
+});
+dropzone.addEventListener('drop', e=>{
+  const files = Array.from(e.dataTransfer.files).filter(f=>f.type==='application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+  addFiles(files);
+});
+pdfInput.addEventListener('change', e=>{
+  addFiles(Array.from(e.target.files));
+  pdfInput.value='';
+});
+function addFiles(files){
+  for(const f of files){ PDF_FILES.push({file:f, id: ++idCounter}); }
+  renderFileList();
+  updateProcessButton();
+}
+function removeFile(id){
+  PDF_FILES = PDF_FILES.filter(p=>p.id!==id);
+  renderFileList();
+  updateProcessButton();
+}
+function renderFileList(){
+  const el = document.getElementById('fileList');
+  el.innerHTML='';
+  for(const p of PDF_FILES){
+    const row = document.createElement('div');
+    row.className='file-row';
+    row.innerHTML = `
+      <span class="name">${escapeHtml(p.file.name)}</span>
+      <span style="display:flex;align-items:center;gap:10px;">
+        <span class="meta">${(p.file.size/1024/1024).toFixed(2)} MB</span>
+        <button class="remove" title="remover">✕</button>
+      </span>`;
+    row.querySelector('.remove').addEventListener('click', ()=>removeFile(p.id));
+    el.appendChild(row);
+  }
+}
+function updateProcessButton(){
+  document.getElementById('btnProcess').disabled = !(CSV_ROWS.length>0 && PDF_FILES.length>0);
+}
+
+/* ---------------------------------------------------------------
+   LOG / PROGRESS helpers
+----------------------------------------------------------------*/
+function log(msg){
+  const el = document.getElementById('log');
+  el.textContent += msg + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+function clearLog(){ document.getElementById('log').textContent=''; }
+function setProgress(pct){
+  const track = document.getElementById('progressTrack');
+  track.classList.add('show');
+  document.getElementById('progressBar').style.width = pct+'%';
+}
+
+/* ---------------------------------------------------------------
+   PDF TEXT EXTRACTION + OCR FALLBACK
+   - Primeiro tenta ler a camada de texto normal do PDF.
+   - Se o nome não for localizado, renderiza a página e usa OCR.
+   - O OCR também tenta casar diretamente com os nomes do CSV.
+----------------------------------------------------------------*/
+function groupLines(items){
+  // items: [{str, x, y}] -> group into lines by y proximity
+  const sorted = items.slice().sort((a,b)=> b.y-a.y || a.x-b.x);
+  const lines = [];
+  const TOL = 2.5;
+  for(const it of sorted){
+    let line = lines.find(l => Math.abs(l.y - it.y) < TOL);
+    if(!line){ line = {y:it.y, items:[]}; lines.push(line); }
+    line.items.push(it);
+  }
+  lines.sort((a,b)=> b.y-a.y);
+  return lines.map(l=>{
+    l.items.sort((a,b)=>a.x-b.x);
+    return l.items.map(i=>i.str).join(' ').replace(/\s+/g,' ').trim();
+  });
+}
+
+function parseEmployeeLine(line){
+  const tokens = line.trim().split(/\s+/).filter(Boolean);
+  if(tokens.length < 4) return null;
+  if(!/^\d+$/.test(tokens[0])) return null;
+  const last3 = tokens.slice(-3);
+  if(last3.length===3 && last3.every(t=>/^\d+$/.test(t))){
+    const name = tokens.slice(1, tokens.length-3).join(' ');
+    if(name.length>=3 && /[A-Za-zÀ-ÿ]/.test(name)) return name;
+  }
+  return null;
+}
+
+function findNameInLines(lines){
+  let name = null;
+  for(let li=0; li<lines.length; li++){
+    if(lines[li].includes('Nome do Funcion') || lines[li].includes('Funcionário') || lines[li].includes('Funcionario')){
+      for(let off=1; off<=3 && li+off<lines.length; off++){
+        const cand = parseEmployeeLine(lines[li+off]);
+        if(cand){ name = cand; break; }
+      }
+      if(name) break;
+    }
+  }
+  if(!name){
+    for(const l of lines){
+      const cand = parseEmployeeLine(l);
+      if(cand){ name = cand; break; }
+    }
+  }
+  return name;
+}
+
+function compactForSearch(s){
+  return normName(s).replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
+
+function findCsvNameInsideOcrText(text){
+  const haystack = ` ${compactForSearch(text)} `;
+  if(!haystack.trim() || !CSV_ROWS.length) return null;
+
+  // 1) Nome completo exato dentro do texto OCR.
+  for(const r of CSV_ROWS){
+    const n = compactForSearch(r.nome);
+    if(n && haystack.includes(` ${n} `)) return r.nome;
+  }
+
+  // 2) Fallback tolerante a pequenos erros de OCR:
+  // compara janelas de palavras com cada nome da planilha.
+  const words = haystack.trim().split(' ').filter(Boolean);
+  let best = null;
+  let bestScore = 0.78;
+  for(const r of CSV_ROWS){
+    const target = compactForSearch(r.nome);
+    const targetWords = target.split(' ').filter(Boolean);
+    if(targetWords.length < 2) continue;
+    const minLen = Math.max(2, targetWords.length - 1);
+    const maxLen = Math.min(words.length, targetWords.length + 1);
+    for(let len=minLen; len<=maxLen; len++){
+      for(let i=0; i+len<=words.length; i++){
+        const windowText = words.slice(i, i+len).join(' ');
+        const sc = similarity(windowText, target);
+        if(sc > bestScore){ bestScore = sc; best = r.nome; }
+      }
+    }
+  }
+  return best;
+}
+
+let OCR_WORKER = null;
+async function getOcrWorker(){
+  if(OCR_WORKER) return OCR_WORKER;
+  if(typeof Tesseract === 'undefined') throw new Error('Biblioteca de OCR não carregou. Verifique a internet.');
+  OCR_WORKER = await Tesseract.createWorker('por');
+  return OCR_WORKER;
+}
+
+async function ocrPage(page, fileName, pageNumber){
+  log(`    OCR: analisando ${fileName} — página ${pageNumber}...`);
+  const viewport = page.getViewport({scale: 2.25});
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.ceil(viewport.width);
+  canvas.height = Math.ceil(viewport.height);
+  const ctx = canvas.getContext('2d', {willReadFrequently:true});
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  await page.render({canvasContext: ctx, viewport}).promise;
+
+  const worker = await getOcrWorker();
+  const ret = await worker.recognize(canvas);
+  const text = ret && ret.data ? (ret.data.text || '') : '';
+  return text;
+}
+
+async function extractPageNames(file){
+  const buf = await file.arrayBuffer();
+  const loadingTask = pdfjsLib.getDocument({data: buf});
+  const pdf = await loadingTask.promise;
+  const names = [];
+  const usedOcr = [];
+  const ocrTexts = [];
+
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    let name = null;
+
+    // Tentativa 1: camada de texto normal do PDF.
+    const content = await page.getTextContent();
+    const items = content.items.map(it=>({str:it.str, x:it.transform[4], y:it.transform[5]}));
+    const lines = groupLines(items);
+    name = findNameInLines(lines);
+
+    // Se o parser tradicional falhar, tenta localizar um nome da planilha
+    // no texto extraído antes de recorrer ao OCR.
+    if(!name && content.items.length){
+      const rawText = content.items.map(it=>it.str).join(' ');
+      name = findCsvNameInsideOcrText(rawText);
+    }
+
+    // Tentativa 2: OCR da página escaneada / sem texto pesquisável.
+    if(!name){
+      try{
+        const ocrText = await ocrPage(page, file.name, i);
+        name = findCsvNameInsideOcrText(ocrText);
+
+        // Se ainda não casou com o CSV, tenta o formato tradicional
+        // usando as linhas reconhecidas pelo OCR.
+        if(!name){
+          const ocrLines = ocrText.split(/\r?\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
+          name = findNameInLines(ocrLines);
+        }
+        usedOcr.push(true);
+        ocrTexts.push(ocrText);
+        if(name) log(`    ✓ OCR encontrou: ${name}`);
+        else log(`    ⚠ OCR concluído, mas o nome não foi identificado na página ${i}`);
+      }catch(e){
+        usedOcr.push(false);
+        ocrTexts.push(null);
+        log(`    ✗ OCR falhou na página ${i}: ${e.message}`);
+      }
+    }else{
+      usedOcr.push(false);
+      ocrTexts.push(null);
+    }
+
+    names.push(name);
+  }
+  return {numPages: pdf.numPages, names, usedOcr, ocrTexts};
+}
+
+/* ---------------------------------------------------------------
+   PDF SPLIT (pdf-lib) + size-safety raster fallback
+----------------------------------------------------------------*/
+const { PDFDocument, StandardFonts } = PDFLib;
+
+function cleanOcrTextForPdf(text){
+  return (text || '')
+    .replace(/[^\x20-\x7EÀ-ÿ\r\n]/g, ' ')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+async function addInvisibleOcrText(doc, page, text){
+  const cleaned = cleanOcrTextForPdf(text);
+  if(!cleaned) return;
+
+  // Adiciona uma camada de texto invisível. Assim, a página escaneada
+  // gerada pelo programa também passa a ser pesquisável no leitor de PDF.
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  const chunks = [];
+  let cur = '';
+  for(const w of words){
+    if((cur + ' ' + w).trim().length > 140){
+      if(cur) chunks.push(cur);
+      cur = w;
+    }else{
+      cur = cur ? `${cur} ${w}` : w;
+    }
+  }
+  if(cur) chunks.push(cur);
+
+  for(let i=0;i<chunks.length;i++){
+    try{
+      page.drawText(chunks[i], {
+        x: 1,
+        y: 1 + (i % 20) * 0.6,
+        size: 0.5,
+        font,
+        opacity: 0
+      });
+    }catch(e){
+      // Um caractere OCR estranho não pode impedir a geração do holerite.
+    }
+  }
+}
+
+async function splitPages(file, pageIndices, ocrTexts=[]){
+  // pageIndices: 0-based array (usually length 1 or 2)
+  const bytes = await file.arrayBuffer();
+  const srcDoc = await PDFDocument.load(bytes, {ignoreEncryption:true});
+  const newDoc = await PDFDocument.create();
+  const copied = await newDoc.copyPages(srcDoc, pageIndices);
+  copied.forEach(p=>newDoc.addPage(p));
+
+  for(let i=0;i<copied.length;i++){
+    if(ocrTexts[i]) await addInvisibleOcrText(newDoc, copied[i], ocrTexts[i]);
+  }
+
+  let outBytes = await newDoc.save();
+
+  // Safety: some scanned/converted PDFs carry the *entire* document's
+  // resources on every single page. If the split page(s) come out
+  // unexpectedly large, rasterize instead so the file stays reasonable.
+  const THRESHOLD = 2_500_000; // ~2.5MB
+  if(outBytes.byteLength > THRESHOLD){
+    outBytes = await rasterizePages(file, pageIndices, ocrTexts);
+  }
+  return outBytes;
+}
+
+async function rasterizePages(file, pageIndices, ocrTexts=[]){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+  const outDoc = await PDFDocument.create();
+  for(let pos=0; pos<pageIndices.length; pos++){
+    const idx = pageIndices[pos];
+    const page = await pdf.getPage(idx+1);
+    const viewport = page.getViewport({scale: 2.0});
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext('2d');
+    await page.render({canvasContext: ctx, viewport}).promise;
+    const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+    const jpegBytes = Uint8Array.from(atob(jpegDataUrl.split(',')[1]), c=>c.charCodeAt(0));
+    const img = await outDoc.embedJpg(jpegBytes);
+    const pageW = viewport.width/2, pageH = viewport.height/2; // back to pt at scale 1
+    const pg = outDoc.addPage([pageW, pageH]);
+    pg.drawImage(img, {x:0, y:0, width:pageW, height:pageH});
+    if(ocrTexts[pos]) await addInvisibleOcrText(outDoc, pg, ocrTexts[pos]);
+  }
+  return await outDoc.save();
+}
+
+/* ---------------------------------------------------------------
+   MAIN PIPELINE
+----------------------------------------------------------------*/
+document.getElementById('btnProcess').addEventListener('click', runPipeline);
+
+async function runPipeline(){
+  clearLog();
+  document.getElementById('resultsCard').classList.add('hidden');
+  document.getElementById('btnDownload').classList.add('hidden');
+  document.getElementById('btnProcess').disabled = true;
+  setProgress(2);
+
+  // 1. read every pdf -> per-page employee names
+  log(`Lendo ${PDF_FILES.length} arquivo(s) PDF...`);
+  const fileData = []; // {fileEntry, numPages, names, usedOcr, ocrTexts}
+  for(let fi=0; fi<PDF_FILES.length; fi++){
+    const entry = PDF_FILES[fi];
+    try{
+      const {numPages, names, usedOcr, ocrTexts} = await extractPageNames(entry.file);
+      fileData.push({entry, numPages, names, usedOcr, ocrTexts});
+      const ocrCount = usedOcr.filter(Boolean).length;
+      log(`  ✓ ${entry.file.name} — ${numPages} página(s)${ocrCount ? ` · OCR em ${ocrCount}` : ''}`);
+    }catch(e){
+      log(`  ✗ ${entry.file.name} — erro ao ler: ${e.message}`);
+    }
+    setProgress(2 + (fi+1)/PDF_FILES.length*28);
+  }
+
+  // 2. flatten to page-entries: {name, fileIdx, pageIdx0, totalPages, fileOrder}
+  let occurrences = [];
+  fileData.forEach((fd, fileOrder)=>{
+    fd.names.forEach((name, pageIdx0)=>{
+      if(name){
+        occurrences.push({name, fileOrder, fileData: fd, pageIdx0, totalPages: fd.numPages, ocrText: fd.ocrTexts ? fd.ocrTexts[pageIdx0] : null});
+      }else{
+        log(`  ⚠ ${fd.entry.file.name} — página ${pageIdx0+1}: nome não identificado (pulei essa página)`);
+      }
+    });
+  });
+
+  // 3. dedupe: for the same normalized name across occurrences, standalone
+  //    (1-page file) versions win; among ties, the latest uploaded wins.
+  const groups = new Map();
+  for(const occ of occurrences){
+    const key = normName(occ.name);
+    if(!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(occ);
+  }
+  const finalEntries = [];
+  for(const [key, occs] of groups){
+    if(occs.length===1){ finalEntries.push({...occs[0], updated:false}); continue; }
+    occs.sort((a,b)=> (a.totalPages-b.totalPages) || (b.fileOrder-a.fileOrder));
+    finalEntries.push({...occs[0], updated:true});
+  }
+  log(`\nTotal de funcionários únicos identificados: ${finalEntries.length}`);
+  setProgress(35);
+
+  // 4. match CPF
+  for(const fe of finalEntries){
+    fe.match = findCpf(fe.name);
+  }
+
+  // 5. build files (split/rasterize) + zip
+  const zip = new JSZip();
+  const okFolder = zip.folder('holerites_renomeados');
+  const missFolder = zip.folder('sem_cpf');
+  const usedNames = new Map();
+  const results = [];
+
+  for(let i=0;i<finalEntries.length;i++){
+    const fe = finalEntries[i];
+    const pageIndices = [fe.pageIdx0];
+    let outBytes;
+    try{
+      outBytes = await splitPages(fe.fileData.entry.file, pageIndices, [fe.ocrText || null]);
+    }catch(e){
+      log(`  ✗ Falha ao extrair página de ${fe.name}: ${e.message}`);
+      setProgress(35 + (i+1)/finalEntries.length*55);
+      continue;
+    }
+
+    let base, folder;
+    if(fe.match && fe.match.cpf){
+      base = `${fe.match.cpf}_${cleanFilenamePart(fe.match.nome)}`;
+      folder = okFolder;
+    }else{
+      base = `SEMCPF_${cleanFilenamePart(fe.name)}`;
+      folder = missFolder;
+    }
+    const count = usedNames.get(base) || 0;
+    const fname = count>0 ? `${base}_${count+1}.pdf` : `${base}.pdf`;
+    usedNames.set(base, count+1);
+
+    folder.file(fname, outBytes);
+    results.push({
+      nome: fe.name,
+      cpf: fe.match ? fe.match.cpf : null,
+      nomeCsv: fe.match ? fe.match.nome : null,
+      fuzzy: fe.match ? (normName(fe.match.nome) !== normName(fe.name)) : false,
+      arquivo: fname,
+      atualizado: fe.updated,
+      semCpf: !fe.match
+    });
+    setProgress(35 + (i+1)/finalEntries.length*55);
+  }
+
+  log('Gerando .zip...');
+  const blob = await zip.generateAsync({type:'blob', compression:'DEFLATE', compressionOptions:{level:6}});
+  setProgress(100);
+  log(`Pronto — ${results.length} holerite(s) no zip.`);
+
+  window.__zipBlob = blob;
+  document.getElementById('btnDownload').classList.remove('hidden');
+  document.getElementById('btnProcess').disabled = false;
+  renderResults(results);
+}
+
+document.getElementById('btnDownload').addEventListener('click', ()=>{
+  if(!window.__zipBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(window.__zipBlob);
+  const stamp = new Date().toISOString().slice(0,10);
+  a.download = `holerites_renomeados_${stamp}.zip`;
+  a.click();
+});
+
+function renderResults(results){
+  const card = document.getElementById('resultsCard');
+  card.classList.remove('hidden');
+
+  const okCount = results.filter(r=>!r.semCpf).length;
+  const missCount = results.filter(r=>r.semCpf).length;
+  const updCount = results.filter(r=>r.atualizado).length;
+  document.getElementById('summaryStrip').innerHTML = `
+    <span class="pill"><b>${results.length}</b> holerites</span>
+    <span class="pill" style="color:var(--green);border-color:var(--green);"><b>${okCount}</b> com CPF</span>
+    <span class="pill" style="color:var(--red);border-color:var(--red);"><b>${missCount}</b> sem CPF</span>
+    <span class="pill" style="color:var(--amber);border-color:var(--amber);"><b>${updCount}</b> usaram versão atualizada</span>
+  `;
+
+  const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML='';
+  results.sort((a,b)=> a.nome.localeCompare(b.nome));
+  for(const r of results){
+    const tr = document.createElement('tr');
+    const cpfCell = r.semCpf
+      ? `<span class="stamp missing">SEM CPF</span>`
+      : `<span class="stamp ok">OK</span> <span style="font-family:'IBM Plex Mono',monospace;">${escapeHtml(r.cpf)}</span>`;
+    const fuzzyNote = r.fuzzy
+      ? `<div style="font-size:10.5px;color:var(--amber);margin-top:2px;">~ casado com: ${escapeHtml(r.nomeCsv)}</div>`
+      : '';
+    tr.innerHTML = `
+      <td>${escapeHtml(r.nome)}${r.atualizado?'<span class="stamp upd">ATUALIZADO</span>':''}${fuzzyNote}</td>
+      <td>${cpfCell}</td>
+      <td class="fname">${escapeHtml(r.arquivo)}</td>
+      <td></td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+/* init */
+loadStoredCsv();
+</script>
+</body>
+</html>
